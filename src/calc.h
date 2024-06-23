@@ -1,0 +1,6 @@
+#ifndef TERMCALC_CALC_H
+#define TERMCALC_CALC_H
+
+
+
+#endif //TERMCALC_CALC_H

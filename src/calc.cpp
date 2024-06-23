@@ -4,10 +4,12 @@
 #include <iomanip>
 #include <cstdlib>
 #include <complex>
-#include <ccomplex>
 #include <chrono>
 #include <ctime>
-
+#include <cstdio>
+#include <functional>
+#include <ctgmath>
+#include "calc.h"
 
 typedef long double float flt_t;
 
@@ -17,15 +19,7 @@ int checkInput(int argc) {
     if (argc != 4) print ("Usage: calc <num1> <op> <num2>\n\n\tOperators: + - x / %\n\tExample: calc 10 / 5\n");
     return argc != 4;
 }
-#include <cstdio>
-#include <cfloat> // DBL_MAX and DBL_MIN
-#include <cmath>
-#include <cstdlib>
-#include <cstring>
-#include <functional>
-#include <ccomplex>
-#include <complex>
-#include <ctgmath>
+
 long getFloat(char* str, flt_t* num) {
     flt_t iPart = 0.0f;
     flt_t fPart = 0.0f;
@@ -75,50 +69,29 @@ int getInput(char* argv[], flt_t& num1, flt_t& num2, char* op) {
     return 0;
 }
 
-flt_t fadd(flt_t num1, flt_t num2) {
-    return num1 + num2;
-}
-
-flt_t fsub(flt_t num1, flt_t num2) {
-    return num1 - num2;
-}
-
-flt_t fmul(flt_t num1, flt_t num2) {
-    return num1 * num2;
-}
-
-flt_t fdiv(flt_t num1, flt_t num2) {
-    return num1 / num2;
-}
-
-flt_t fmod(flt_t num1, flt_t num2) {
-    return fmod(num1, num2);
-}
-
-flt_t flcalcs(flt_t num1, flt_t num2, char op) {
-
-    flt_t result;
+void calcs(flt_t& result, flt_t num1, flt_t num2, char op) {
     switch (op) {
-        case '+': result = fadd(num1, num2); break;
-        case '-': result = fsub(num1, num2); break;
-        case 'x': result = fmul(num1, num2); break;
+        case '+': result = faddl(num1, num2); break;
+        case '-': result = fsubl(num1, num2); break;
+        case 'x': result = fmull(num1, num2); break;
         case '/': result = fdivl(num1, num2); break;
-        case '%': result = fmod(num1, num2); break;
+        case '%': result = fmodl(num1, num2); break;
     }
-    return result? result : DBL_MAX;
 }
 
 int main(int argc, char* argv[]) {
     if (checkInput(argc)) return 1;
 
     flt_t num1, num2;
+    num1 = num2 = 0.0f;
     char op = argv[2][0];
 
     if (getInput(argv, num1, num2, &op)) return 1;
 
     std::cout << std::setprecision(16);
-    flt_t result = flcalcs(num1, num2, op);
-    std::cout <<  << result << std::endl;
+    flt_t result = 0.0f;
+    flt_t result = calcs(num1, num2, op);
+    std::cout << result << std::endl;
     //printf("%Lf\n", result);
 
     return 0;
