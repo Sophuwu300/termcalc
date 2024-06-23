@@ -1,14 +1,12 @@
 NAME := termcalc
+CCFLAGS := -O3
+SRC := src/*.c
 
-CXX := g++ -std=c++17
-SRC := src/*.cpp
-TARGET := $(NAME)
+all: $(SRC)
+	@./zig-cc/zigcomp
 
-all: $(TARGET)
-
-$(TARGET): $(SRC)
-	$(CXX) -o $(TARGET) $(SRC)
+zig: $(SRC)
+	$(CC) $(CCFLAGS) -o build/$(NAME).$(ZIGTARGET) $(SRC)
 
 clean:
-	rm $(TARGET)
-
+	@echo "clean target is for compatibility with autotools"

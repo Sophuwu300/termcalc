@@ -3,7 +3,6 @@
 
 #include "calc.h"
 
-
 int checkInput(int argc) {
     if (argc != 4) print ("Usage: calc <num1> <op> <num2>\n\n\tOperators: + - x / %\n\tExample: calc 10 / 5\n");
     return argc != 4;
