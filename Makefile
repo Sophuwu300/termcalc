@@ -10,5 +10,5 @@ $(TARGET): $(SRC)
 	$(CXX) -o $(TARGET) $(SRC)
 
 clean:
-	rm -rf $(OBJ_DIR) $(BIN_DIR)
+	rm $(TARGET)
 

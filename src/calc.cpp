@@ -1,15 +1,34 @@
 #include <iostream>
+#include <cmath>
+#include <cfloat>
+#include <iomanip>
+#include <cstdlib>
+#include <complex>
+#include <ccomplex>
+#include <chrono>
+#include <ctime>
 
-#define print(a) std::cout << a << std::endl
+
+typedef long double float flt_t;
+
+#define print(s) std::cout << s << std::endl
 
 int checkInput(int argc) {
     if (argc != 4) print ("Usage: calc <num1> <op> <num2>\n\n\tOperators: + - x / %\n\tExample: calc 10 / 5\n");
     return argc != 4;
 }
-
-long getFloat(char* str, double* num) {
-    double iPart = 0;
-    double fPart = 0;
+#include <cstdio>
+#include <cfloat> // DBL_MAX and DBL_MIN
+#include <cmath>
+#include <cstdlib>
+#include <cstring>
+#include <functional>
+#include <ccomplex>
+#include <complex>
+#include <ctgmath>
+long getFloat(char* str, flt_t* num) {
+    flt_t iPart = 0.0f;
+    flt_t fPart = 0.0f;
     long fPartLen = 0;
     long i = 0;
     long sign = 1;
@@ -25,13 +44,13 @@ long getFloat(char* str, double* num) {
             return 0;
         }
         if (str[i] < '0' || str[i] > '9') return 1;
-        iPart = iPart * 10 + double(str[i]) - '0';
+        iPart = iPart * 10 + flt_t(str[i]) - '0';
         i++;
     }
     i++;
     while (str[i] != '\0') {
         if (str[i] < '0' || str[i] > '9') return 1;
-        fPart = fPart * 10 + double(str[i]) - '0';
+        fPart = fPart * 10 + flt_t(str[i]) - '0';
         fPartLen++;
         i++;
     }
@@ -43,7 +62,7 @@ long getFloat(char* str, double* num) {
     return 0;
 }
 
-int getInput(char* argv[], double* num1, double* num2, char* op) {
+int getInput(char* argv[], flt_t& num1, flt_t& num2, char* op) {
     if (getFloat(argv[1], num1) || getFloat(argv[3], num2)) {
         print ("Error: Invalid number\n");
         return 1;
@@ -56,36 +75,51 @@ int getInput(char* argv[], double* num1, double* num2, char* op) {
     return 0;
 }
 
-void calc(double num1, double num2, char op) {
+flt_t fadd(flt_t num1, flt_t num2) {
+    return num1 + num2;
+}
+
+flt_t fsub(flt_t num1, flt_t num2) {
+    return num1 - num2;
+}
+
+flt_t fmul(flt_t num1, flt_t num2) {
+    return num1 * num2;
+}
+
+flt_t fdiv(flt_t num1, flt_t num2) {
+    return num1 / num2;
+}
+
+flt_t fmod(flt_t num1, flt_t num2) {
+    return fmod(num1, num2);
+}
+
+flt_t flcalcs(flt_t num1, flt_t num2, char op) {
+
+    flt_t result;
     switch (op) {
-        case '+':
-            print (num1 + num2);
-            return;
-        case '-':
-            print (num1 - num2);
-            return;
-        case 'x':
-            print (num1 * num2);
-            return;
-        case '/':
-            print (num1 / num2);
-            return;
-        case '%':
-            print ((long)(num1) % (long)(num2));
-            return;
+        case '+': result = fadd(num1, num2); break;
+        case '-': result = fsub(num1, num2); break;
+        case 'x': result = fmul(num1, num2); break;
+        case '/': result = fdivl(num1, num2); break;
+        case '%': result = fmod(num1, num2); break;
     }
+    return result? result : DBL_MAX;
 }
 
 int main(int argc, char* argv[]) {
     if (checkInput(argc)) return 1;
 
-    double num1 = 0.0;
-    double num2 = 0.0;
+    flt_t num1, num2;
     char op = argv[2][0];
 
-    if (getInput(argv, &num1, &num2, &op)) return 1;
+    if (getInput(argv, num1, num2, &op)) return 1;
 
-    calc(num1, num2, op);
+    std::cout << std::setprecision(16);
+    flt_t result = flcalcs(num1, num2, op);
+    std::cout <<  << result << std::endl;
+    //printf("%Lf\n", result);
 
     return 0;
 }
