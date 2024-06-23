@@ -1,3 +1,10 @@
-calc
-calcStatic
-termcalc
+**/*
+!**/*/
+!**/*.cpp
+!**/*.c
+!**/*.h
+!**/*.hpp
+!**/Makefile
+!**/README.md
+!**/.gitignore
+!src/**/*
