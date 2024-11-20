@@ -1,12 +1,11 @@
-#include <iostream>
 #include "calc.h"
 
-long getFloat(char* str, flt_t& num) {
+int getFloat(char* str, flt_t& num) {
     flt_t iPart = 0.0f;
     flt_t fPart = 0.0f;
-    long fPartLen = 0;
-    long i = 0;
-    long sign = 1;
+    int_t fPartLen = 0;
+    int i = 0;
+    int sign = 1;
 
     if (str[0] == '-') {
         sign = -1;

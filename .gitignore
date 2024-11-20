@@ -1,11 +1,2 @@
-**/*
-!.idea/**/*
-!**/*/
-!**/*.cpp
-!**/*.c
-!**/*.h
-!**/*.hpp
-!**/Makefile
-!**/README.md
-!**/.gitignore
-!src/**/*
+build/
+.idea/
