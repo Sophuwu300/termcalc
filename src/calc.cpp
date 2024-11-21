@@ -1,72 +1,68 @@
-#include "calc.h"
+#include "calc.hpp"
 
-int getFloat(char* str, flt_t& num) {
-    flt_t iPart = 0.0f;
-    flt_t fPart = 0.0f;
-    int_t fPartLen = 0;
-    int i = 0;
-    int sign = 1;
+int getFloat(strr str, flt_t& n) {
+    n = 0.0f;
+    for (long j = long(str[0] == '-'); j < str.length(); j++)
+        if (str[j] >= '0' && str[j] <= '9') n = n * 10 + flt_t(str[j] - '0');
+        else if (str[j] == '.')
+            for (long i = j++; j < str.length(); j++)
+                if (str[j] >= '0' && str[j] <= '9') n += (flt_t(str[j] - '0') / pow(10, j-i));
+                else return 1;
+        else return 1;
+    n*=1-2*(str[0]=='-');
+    return 0;
+}
 
-    if (str[0] == '-') {
-        sign = -1;
-        i++;
-    }
+op_t ops = {
+    {strr("+"), fptr([](flt_t a, flt_t b){ return flt_t(a + b); })},
+    {strr("-"), fptr([](flt_t a, flt_t b){ return flt_t(a - b); })},
+    {strr("x"), fptr([](flt_t a, flt_t b){ return flt_t(a * b); })},
+    {strr("*"), fptr([](flt_t a, flt_t b){ return flt_t(a * b); })},
+    {strr("/"), fptr([](flt_t a, flt_t b){ return flt_t(a / b); })},
+    {strr("^"), fptr([](flt_t a, flt_t b){ return flt_t(pow(a, b)); })},
+    {strr("%"), fptr([](flt_t a, flt_t b){ return flt_t(int_t(a)%int_t(b)); })}
+};
 
-    while (str[i] != '.') {
-        if (str[i] == '\0') {
-            num = sign * iPart;
-            return 0;
+int calc(strr n1,strr opi, strr n2) {
+    char bf[128]="error: invalid input";
+    flt_t num1, num2;
+    fptr op = ops[opi];
+    if (op == nullptr || getFloat(n1, num1) || getFloat(n2, num2))return puts("error: invalid input");
+    flt_t ans = op(num1, num2);
+    int n = snprintf(bf, 128, "%.16Lf", ans);
+    for (n--;n>0;n--) {
+        if (bf[n] != '0') {
+            if (bf[n] != '.')n++;
+            break;
         }
-        if (str[i] < '0' || str[i] > '9') return 1;
-        iPart = iPart * 10 + flt_t(str[i]) - '0';
-        i++;
     }
-    i++;
-    while (str[i] != '\0') {
-        if (str[i] < '0' || str[i] > '9') return 1;
-        fPart = fPart * 10 + flt_t(str[i]) - '0';
-        fPartLen++;
-        i++;
-    }
-    while (fPartLen > 0) {
-        fPart /= 10;
-        fPartLen--;
-    }
-    num = sign * (iPart + fPart);
+    bf[n]='\0';
+    puts(bf);
     return 0;
 }
 
-int getInput(char* argv[], flt_t& num1, flt_t& num2, char* op) {
-    if (getFloat(argv[1], num1) || getFloat(argv[3], num2)) {
-        std::cout<<("Error: Invalid number\n") << std::endl;
-        return 1;
-    }
-    *op = argv[2][0];
-    if (*op != '+' && *op != '-' && *op != 'x' && *op != '/' && *op != '%') {
-        std::cout<<("Error: Invalid operator\n") << std::endl;
-        return 1;
-    }
-    return 0;
-}
-
-flt_t calcs(flt_t num1, flt_t num2, char op) {
-    switch (op) {
-        case '+': return (flt_t)(num1 + num2);
-        case '-': return (flt_t)(num1 - num2);
-        case 'x': return (flt_t)(num1 * num2);
-        case '/': return (flt_t)(num1 / num2);
-        default: return 0.0f;
-    }
+void help(char* argv) {
+    printf("Usage:\t%s [number] [operator] [number]\n", argv);
+    printf("\t%s [operator]\n\n", argv);
+    puts("If numbers are not provided, they will be read from stdin");
+    puts("Supported operators: + - x / ^ %");
+    exit(0);
 }
 
 int main(int argc, char* argv[]) {
-    if (argc != 4) return 1;
+    if (argc == 2){
+        strr arg = strr(argv[1]);
+        if (arg=="-h"||arg=="--help"||arg=="-?") help(argv[0]);
+        strr in[2]={"",""};
+        int i = 0;
+        char c = getchar();
+        while(c != EOF) {
+            if (c == '\n'||c == ' ')if(i) break; else i++;else in[i] += c;
+            c = getchar();
+        }
+        return 0!=calc(in[0], argv[1], in[1]);
 
-    flt_t num1, num2;
-    num1 = num2 = 0.0f;
-    char op = argv[2][0];
-    if (getInput(argv, num1, num2, &op)) return 1;
-    flt_t result = calcs(num1, num2, op);
-    std::cout << result << std::endl;
-    return 0;
+    }
+    if (argc == 4) return 0!=calc(argv[1], argv[2], argv[3]);
+    help(argv[0]);
 }
