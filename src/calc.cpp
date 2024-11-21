@@ -29,7 +29,7 @@ int calc(strr n1,strr opi, strr n2) {
     fptr op = ops[opi];
     if (op == nullptr || getFloat(n1, num1) || getFloat(n2, num2))return puts("error: invalid input");
     flt_t ans = op(num1, num2);
-    int n = snprintf(bf, 128, "%.16Lf", ans);
+    int n = snprintf(bf, 128, "%.12Lf", ans);
     for (n--;n>0;n--) {
         if (bf[n] != '0') {
             if (bf[n] != '.')n++;
@@ -44,15 +44,13 @@ int calc(strr n1,strr opi, strr n2) {
 void help(char* argv) {
     printf("Usage:\t%s [number] [operator] [number]\n", argv);
     printf("\t%s [operator]\n\n", argv);
-    puts("If numbers are not provided, they will be read from stdin");
+    puts("If numbers are not provided, they will be read from stdin.");
     puts("Supported operators: + - x / ^ %");
     exit(0);
 }
 
 int main(int argc, char* argv[]) {
-    if (argc == 2){
-        strr arg = strr(argv[1]);
-        if (arg=="-h"||arg=="--help"||arg=="-?") help(argv[0]);
+    if (argc == 2&&(ops[strr(argv[1])]!=nullptr)) {
         strr in[2]={"",""};
         int i = 0;
         char c = getchar();
@@ -61,8 +59,8 @@ int main(int argc, char* argv[]) {
             c = getchar();
         }
         return 0!=calc(in[0], argv[1], in[1]);
-
     }
     if (argc == 4) return 0!=calc(argv[1], argv[2], argv[3]);
     help(argv[0]);
+    return 0;
 }
